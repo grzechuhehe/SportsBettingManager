@@ -1,10 +1,9 @@
-
 public class Bet {
 
-    public String title;
-    public float amount;
-    public float odds;
-    public String date;
+    private String title;
+    private Float amount;
+    private Float odds;
+    private String date;
 
 
     Bet(String title, float amount, float odds, String date) {
@@ -15,20 +14,36 @@ public class Bet {
     }
 
     public final String getTitle() {
-        return title;
+        return this.title;
     }
 
-    public final float getAmount() {
-        return amount;
+    public final Float getAmount() {
+        return this.amount;
     }
 
 
-    public final float getOdds() {
-        return odds;
+    public final Float getOdds() {
+        return this.odds;
     }
 
     public final String getDate() {
-        return date;
+        return this.date;
     }
 
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setAmount(Float amount) {
+        this.amount = amount;
+    }
+
+    public void setOdds(Float odds) {
+        this.odds = odds;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
 }
