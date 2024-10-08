@@ -1,18 +1,17 @@
-import java.sql.SQLOutput;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
 
 public class SportsBettingManager {
 
     List<Bet> bets = new ArrayList<>();
-    ArrayList<Bet> betsAKO = new ArrayList<>();
-    private Float odds;
+    List<Bet> betsAKO = new ArrayList<>();
+    Scanner scanner = new Scanner(System.in);
 
     public void run() {
-
-        Scanner scanner = new Scanner(System.in);
 
         System.out.println("Welcome to SportBettingRiskManager, where you can manage your bets and manage risk of your deposit!");
 
@@ -20,7 +19,7 @@ public class SportsBettingManager {
             System.out.println("\nCo chcesz zrobić?");
             System.out.println("1. Dodaj zaklad pojedynczy ");
             System.out.println("2. Dodaj zakład AKO");
-            System.out.println("3. Wyswietl zaklady pojedyncze");
+            System.out.println("3. Wyswietl zaklady pojedyńcze");
             System.out.println("4. Wyswietl zaklady AKO");
             System.out.println("5. Zakoncz");
             System.out.println();
@@ -28,18 +27,17 @@ public class SportsBettingManager {
             int choice = Integer.parseInt(scanner.nextLine());
 
             switch (choice) {
-                case 1 :
-                    addSingleBet(scanner);
+                case 1:
+                    addSingleBet();
                     break;
-                case 2 :
-                    addAKOBet(scanner);
+                case 2:
+                    addAKOBet();
                     break;
-                case 3 :
+                case 3:
                     viewSingleBets();
                     break;
                 case 4 :
                     viewAKOBets();
-                    break;
                 case 5:
                     System.out.println("Dziekujemy za skorzystanie z aplikacji");
                     scanner.close();
@@ -50,174 +48,105 @@ public class SportsBettingManager {
         }
     }
 
+    private String setTitle() {
+        System.out.println("Podaj nazwe zakładu : ");
+        return scanner.nextLine();
+    }
 
-    public void addSingleBet(Scanner scanner) {
-        String title="";
-        Float amount = 0F;
-        Float odds = 1F;
-        String dateInput;
-        String date = "";
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-        Bet bet = new Bet(title, amount, odds, date);
-
-        System.out.println("Podaj nazwę typu : ");
-        title = scanner.nextLine();
-
-        do {
+    private float setAmount() {
+        while(true) {
             try {
                 System.out.println("Podaj kwote : ");
-                amount = Float.parseFloat(scanner.nextLine());
-                if(amount <= 0) {
-                    System.out.println("Kwota zakładu nie może być ujemna");
+                float amount = Float.parseFloat(scanner.nextLine());
+                if(amount > 0) {
+                    return amount;
                 }
-            } catch (NumberFormatException e) {
+                System.out.println("Wartość zakładu musi być większa od 0");
+            } catch(NumberFormatException e) {
                 System.out.println("Kwota musi być liczbą.");
             }
-        } while (amount <= 0);
+        }
+    }
 
-        do {
+    private float setOdds() {
+        while(true) {
             try {
                 System.out.println("Podaj kurs : ");
-                odds = Float.parseFloat(scanner.nextLine());
-                if(odds <= 1) {
-                    System.out.println("Kurs zakładu nie może być mniejszy do 1.");
+                float odds = Float.parseFloat(scanner.nextLine());
+                if(odds >= 1) {
+                    return odds;
                 }
-            } catch (NumberFormatException e) {
-                System.out.println("Kurs musi być liczbą.");
-            }
-        } while (odds <= 1);
-
-        do {
-            try {
-                System.out.println("Podaj date w formacie dd.MM.yyyy: ");
-                dateInput = scanner.nextLine();
-                date = String.valueOf(LocalDate.parse(dateInput,formatter));
-            } catch (DateTimeParseException e) {
-                System.out.println("Niepoprawny format daty, skorzystaj z formatu dd-MM-yyyy");
-            }
-        } while (Objects.equals(date, ""));
-
-        System.out.println("Zakład został przyjęty.");
-        bet.setTitle(title);
-        bet.setAmount(amount);
-        bet.setOdds(odds);
-        bet.setDate(date);
-
-        bets.add(bet);
-
-    }
-
-    public void addAKOBet(Scanner scanner)  {
-        ArrayList<String> titles = new ArrayList<>();
-        ArrayList<Float> newOdds = new ArrayList<>();
-        ArrayList<String> dates = new ArrayList<>();
-        String title="";
-        Float amount = 0F;
-        Float odds = 1F;
-        String dateInput;
-        String date = "";
-        String d = "";
-        boolean cont = true;
-        Float o = 1F;
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-        Bet bet = new Bet(title, amount, odds, date);
-        System.out.println(bet.getTitle());
-        System.out.println(bet.getAmount());
-        System.out.println(bet.getOdds());
-        System.out.println(bet.getDate());
-
-            System.out.println("Podaj nazwę typu : ");
-            title = scanner.nextLine();
-            do {
-                try {
-                    System.out.println("Podaj kwote : ");
-                    amount = Float.parseFloat(scanner.nextLine());
-                    if (amount <= 0) {
-                        System.out.println("Kwota zakładu nie może być ujemna");
-                    }
-                } catch (NumberFormatException e) {
-                    System.out.println("Kwota musi być liczbą.");
-                }
-            } while (amount <= 0);
-
-            do {
-                try {
-                    System.out.println("Podaj kurs : ");
-                    odds = Float.parseFloat(scanner.nextLine());
-                    if (odds <= 1) {
-                        System.out.println("Kurs zakładu nie może być mniejszy do 1.");
-                    }
-                } catch (NumberFormatException e) {
-                    System.out.println("Kurs musi być liczbą.");
-                }
-            } while (odds <= 1);
-
-            do {
-                try {
-                    System.out.println("Podaj date w formacie dd.MM.yyyy: ");
-                    dateInput = scanner.nextLine();
-                    date = String.valueOf(LocalDate.parse(dateInput, formatter));
-                } catch (DateTimeParseException e) {
-                    System.out.println("Niepoprawny format daty, skorzystaj z formatu dd.MM.yyyy");
-                }
-            } while (Objects.equals(date, ""));
-
-        while (cont) {
-            System.out.println("Jeśli chcesz kontynuować, napisz TAK");
-            String doWeContinue = scanner.nextLine();
-            if (doWeContinue.equalsIgnoreCase("TAK")) {
-                System.out.println("Podaj nazwę typu : ");
-                String t = scanner.nextLine();
-                titles.add(t);
-
-                do {
-                    try {
-                        System.out.println("Podaj kurs : ");
-                        o = Float.parseFloat(scanner.nextLine());
-                        if (o <= 1) {
-                            System.out.println("Kurs zakładu nie może być mniejszy do 1.");
-                        }
-                    } catch (NumberFormatException e) {
-                        System.out.println("Kurs musi być liczbą.");
-                    }
-                } while (o <= 1);
-                newOdds.add(o);
-
-                do {
-                    try {
-                        System.out.println("Podaj date w formacie dd.MM.yyyy: ");
-                        dateInput = scanner.nextLine();
-                        d = String.valueOf(LocalDate.parse(dateInput, formatter));
-                    } catch (DateTimeParseException e) {
-                        System.out.println("Niepoprawny format daty, skorzystaj z formatu dd.MM.yyyy");
-                    }
-                } while (Objects.equals(d, ""));
-                dates.add(d);
-
-            } else {
-
-                for (String s : titles) {
-                    title += STR." \{s} ";
-                }
-                for (Float newOdd : newOdds) {
-                    odds *= newOdd;
-                }
-                for (String s : dates) {
-                    date += STR." \{s} ";
-                }
-                cont = false;
-                System.out.println("Zaklad zostal przyjęty");
-                bet.setTitle(title);
-                bet.setAmount(amount);
-                bet.setOdds(odds);
-                bet.setDate(date);
-
-                betsAKO.add(bet);
+                System.out.println("Kurs musi być większy od 1 ");
+            } catch(NumberFormatException e) {
+                System.out.println("Kurs musi być liczbą");
             }
         }
-
-
     }
+
+    public String setDate() {
+        while (true) {
+            System.out.println("Wpisz date zakładu o formacie dd.MM.yyyy:");
+            try {
+                String inputDate = scanner.nextLine();
+                LocalDate.parse(inputDate, DateTimeFormatter.ofPattern("dd.MM.yyyy"));
+                return inputDate;
+            } catch (DateTimeParseException e) {
+                System.out.println("Niepoprawny format daty, data musi być w formacie dd.MM.yyyy!");
+            }
+        }
+    }
+
+    
+    public void addSingleBet() {
+        String title = setTitle();
+        float amount = setAmount();
+        float odds = setOdds();
+        String date = setDate();
+        Bet bet = new Bet(title,amount,odds,date);
+        bets.add(bet);
+        System.out.println("Poprawnie dodano zakład");
+    }
+
+
+    public Float calculateTotalOdds(ArrayList<Float> oddsAKO) {
+        Float odds = 1f;
+        for(int i = 0; i < oddsAKO.size(); i++) {
+            odds *= oddsAKO.get(i);
+        }
+        return odds;
+    }
+
+    public void addAKOBet() {
+        String cont;
+        boolean doWeContinue = true;
+        StringBuilder title = new StringBuilder();
+        StringBuilder date = new StringBuilder();
+        float odds;
+        float amount;
+        ArrayList<Float> oddsAKO = new ArrayList<>();
+        title.append(setTitle());
+        amount = setAmount();
+        oddsAKO.add(setOdds());
+        date.append(setDate());
+
+        while(doWeContinue) {
+            System.out.println("Jeśli chcesz kontynuować, wpisz TAK.");
+            cont = scanner.nextLine();
+            if(cont.equalsIgnoreCase("tak")) {
+                title.append(STR."\{setTitle()}").append(" ");
+                oddsAKO.add(setOdds());
+                date.append(STR."\{setDate()}").append(" ");
+            } else {
+                odds = calculateTotalOdds(oddsAKO);
+                doWeContinue = false;
+                Bet betAKO = new Bet(title.toString(),amount,odds, date.toString());
+                betsAKO.add(betAKO);
+                System.out.println("Poprawnie dodano zakład");
+            }
+
+        }
+    }
+
 
     public void viewSingleBets() {
         bets.forEach(bet -> {
@@ -230,13 +159,11 @@ public class SportsBettingManager {
     }
 
     public void viewAKOBets() {
-        betsAKO.forEach(bet -> {
-            System.out.println(bet.getTitle()+" ");
-            System.out.println(bet.getAmount());
-            System.out.println(bet.getOdds());
-            System.out.println(bet.getDate());
-            System.out.println();
+        betsAKO.forEach(betAKO -> {
+            System.out.println(STR."\{betAKO.getTitle()} ");
+            System.out.println(STR."\{betAKO.getAmount()}zł");
+            System.out.println(STR."\{betAKO.getOdds()}");
+            System.out.println(STR."\{betAKO.getDate()}");
         });
-        }
+    }
 }
-
